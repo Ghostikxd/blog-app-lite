@@ -4,40 +4,79 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 
 interface FormPostProps {
 	submit: SubmitHandler<FormInputPost>
+	isEditing: boolean
 }
 
-const FormPost = ({ submit }: FormPostProps) => {
-	const { register, handleSubmit } = useForm<FormInputPost>()
+const FormPost = ({ submit, isEditing }: FormPostProps) => {
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm<FormInputPost>()
 
 	return (
 		<form
 			onSubmit={handleSubmit(submit)}
-			className='flex flex-col items-center justify-center gap-5 mt-10 text-base'
+			className='flex flex-col  items-center justify-center gap-5 mt-10 text-base'
 		>
 			<input
-				{...register('title')}
+				{...register('title', { required: true })}
 				type='text'
 				placeholder='Post title...'
-				className='input input-bordered input-primary w-full max-w-lg'
+				className={`input input-bordered input-primary w-full max-w-lg ${
+					errors.title ? 'border-red-500 focus:border-red-500 ' : ''
+				}`}
 			/>
+
+			{errors.title && (
+				<span className=' text-red-500 text-sm mr-[350px]'>
+					Please enter a title.
+				</span>
+			)}
+
 			<textarea
-				{...register('content')}
-				className='textarea textarea-primary w-full max-w-lg text-base'
+				{...register('content', { required: true })}
+				className={`textarea textarea-primary w-full max-w-lg text-base ${
+					errors.content ? 'border-red-500 focus:border-red-500' : ''
+				}`}
 				placeholder='Post content...'
 			></textarea>
+			{errors.content && (
+				<span className='text-red-500 text-sm mr-[350px]'>
+					Please enter content.
+				</span>
+			)}
+
 			<select
-				{...register('tag')}
-				className='select select-primary w-full max-w-lg font-bold text-base'
+				{...register('tag', {
+					required: 'Please select a tag.',
+					validate: value => value !== '' || 'Please select a tag.',
+				})}
+				className={`select select-primary w-full max-w-lg font-bold text-base ${
+					errors.tag ? 'border-red-500 focus:border-red-500' : ''
+				}`}
+				defaultValue={''}
 			>
-				<option disabled selected>
-					Select tags
+				<option disabled value='' className='text-gray-500'>
+					Select tag
 				</option>
-				<option>Game of Thrones</option>
-				<option>Lost</option>
-				<option>Breaking Bad</option>
-				<option>Walking Dead</option>
+				<option value='Overwatch'>Overwatch</option>
+				<option value='CS2'>CS2</option>
+				<option value='HearthStone'>HearthStone</option>
+				<option value='World of Warcraft'>World of Warcraft</option>
 			</select>
-			<button className='btn btn-primary w-full max-w-lg'>Create</button>
+			{errors.tag && (
+				<span className='text-red-500 text-sm mr-[350px]'>
+					{errors.tag.message}
+				</span>
+			)}
+
+			<button
+				type='submit'
+				className='btn btn-primary w-full max-w-lg text-base font-bold hover:scale-105 duration-500'
+			>
+				{isEditing ? 'Update post' : 'Create post'}
+			</button>
 		</form>
 	)
 }
