@@ -15,10 +15,14 @@ const CreatePage = () => {
 
 	return (
 		<QueryClientProvider client={queryClient}>
-			<div>
+			<div className=''>
 				<BackButton />
 				<h1 className='text-2xl my-4 font-bold text-center'>Add new post</h1>
-				<FormPost submit={handleCreatePost} isEditing={false} />
+				<FormPost
+					submit={handleCreatePost}
+					isEditing={false}
+					className='mx-auto mt-10'
+				/>
 			</div>
 		</QueryClientProvider>
 	)
