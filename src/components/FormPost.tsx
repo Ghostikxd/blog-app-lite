@@ -1,5 +1,6 @@
 'use client'
 import { FormInputPost } from '@/types'
+import { Tag } from '@prisma/client'
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 import clsx from 'clsx'
@@ -19,14 +20,13 @@ const FormPost = ({ submit, isEditing, className, ...rest }: FormPostProps) => {
 	} = useForm<FormInputPost>()
 
 	//fetch list tags
-	const { data: dataTags, isLoading: isLoadingTags } = useQuery({
+	const { data: dataTags, isLoading: isLoadingTags } = useQuery<Tag[]>({
 		queryKey: ['tags'],
 		queryFn: async () => {
 			const response = await axios.get('/api/tags')
 			return response.data
 		},
 	})
-	console.log(dataTags)
 
 	return (
 		<form
@@ -61,24 +61,29 @@ const FormPost = ({ submit, isEditing, className, ...rest }: FormPostProps) => {
 				<span className='text-red-500 text-sm '>Please enter content.</span>
 			)}
 
-			<select
-				{...register('tag', {
-					required: 'Please select a tag.',
-					validate: value => value !== '' || 'Please select a tag.',
-				})}
-				className={`select select-primary w-full  font-bold text-base ${
-					errors.tag ? 'border-red-500 focus:border-red-500' : ''
-				}`}
-				defaultValue={''}
-			>
-				<option disabled value='' className='text-gray-500'>
-					Select tag
-				</option>
-				<option value='Overwatch'>Overwatch</option>
-				<option value='CS2'>CS2</option>
-				<option value='HearthStone'>HearthStone</option>
-				<option value='World of Warcraft'>World of Warcraft</option>
-			</select>
+			{isLoadingTags ? (
+				<span className='loading loading-spinner text-primary loading-md'></span>
+			) : (
+				<select
+					{...register('tag', {
+						required: 'Please select a tag.',
+						validate: value => value !== '' || 'Please select a tag.',
+					})}
+					className={`select select-primary w-full  font-bold text-base ${
+						errors.tag ? 'border-red-500 focus:border-red-500' : ''
+					}`}
+					defaultValue={''}
+				>
+					<option disabled value='' className='text-gray-500'>
+						Select tag
+					</option>
+					{dataTags?.map(item => (
+						<option key={item.id} value={item.id}>
+							{item.name}
+						</option>
+					))}
+				</select>
+			)}
 			{errors.tag && (
 				<span className='text-red-500 text-sm '>{errors.tag.message}</span>
 			)}

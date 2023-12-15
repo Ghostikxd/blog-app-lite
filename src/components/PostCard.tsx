@@ -1,8 +1,18 @@
+import { Tag } from '@prisma/client'
 import clsx from 'clsx'
 import Link from 'next/link'
 import { HTMLAttributes } from 'react'
 
-const PostCard = ({ className, ...rest }: HTMLAttributes<HTMLDivElement>) => {
+interface PostCardProps extends HTMLAttributes<HTMLDivElement> {
+	post: {
+		id: string
+		title: string
+		content: string
+		tag: Tag
+	}
+}
+
+const PostCard = ({ post, className, ...rest }: PostCardProps) => {
 	return (
 		<div
 			className={clsx([
@@ -12,11 +22,14 @@ const PostCard = ({ className, ...rest }: HTMLAttributes<HTMLDivElement>) => {
 			{...rest}
 		>
 			<div className='card-body'>
-				<h2 className='card-title'>Card title!</h2>
-				<p>If a dog chews shoes whose shoes does he choose?</p>
+				<h2 className='card-title'>{post.title}</h2>
+				<p>{post.content}</p>
 				<div className='card-actions justify-end'>
-					<Link href='/blog/1' className='hover:underline'>
-						Read more...{' '}
+					<div className='badge badge-primary badge-outline mr-auto '>
+						{post.tag.name}
+					</div>
+					<Link href={`/blog/${post.id}`} className='hover:underline'>
+						Read more...
 					</Link>
 				</div>
 			</div>
