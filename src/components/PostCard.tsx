@@ -23,7 +23,7 @@ const PostCard = ({ post, className, ...rest }: PostCardProps) => {
 		>
 			<div className='card-body'>
 				<h2 className='card-title'>{post.title}</h2>
-				<p>{post.content}</p>
+				<p className='truncate'>{post.content}</p>
 				<div className='card-actions justify-end'>
 					<div className='badge badge-primary badge-outline mr-auto '>
 						{post.tag.name}

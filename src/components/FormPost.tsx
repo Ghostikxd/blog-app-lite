@@ -10,14 +10,25 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 interface FormPostProps extends HTMLAttributes<HTMLFormElement> {
 	submit: SubmitHandler<FormInputPost>
 	isEditing: boolean
+	initialValue?: FormInputPost
+	isLoadingSubmit: boolean
 }
 
-const FormPost = ({ submit, isEditing, className, ...rest }: FormPostProps) => {
+const FormPost = ({
+	submit,
+	initialValue,
+	isLoadingSubmit,
+	isEditing,
+	className,
+	...rest
+}: FormPostProps) => {
 	const {
 		register,
 		handleSubmit,
 		formState: { errors },
-	} = useForm<FormInputPost>()
+	} = useForm<FormInputPost>({
+		defaultValues: initialValue,
+	})
 
 	//fetch list tags
 	const { data: dataTags, isLoading: isLoadingTags } = useQuery<Tag[]>({
@@ -65,12 +76,12 @@ const FormPost = ({ submit, isEditing, className, ...rest }: FormPostProps) => {
 				<span className='loading loading-spinner text-primary loading-md'></span>
 			) : (
 				<select
-					{...register('tag', {
+					{...register('tagId', {
 						required: 'Please select a tag.',
 						validate: value => value !== '' || 'Please select a tag.',
 					})}
 					className={`select select-primary w-full  font-bold text-base ${
-						errors.tag ? 'border-red-500 focus:border-red-500' : ''
+						errors.tagId ? 'border-red-500 focus:border-red-500' : ''
 					}`}
 					defaultValue={''}
 				>
@@ -84,15 +95,24 @@ const FormPost = ({ submit, isEditing, className, ...rest }: FormPostProps) => {
 					))}
 				</select>
 			)}
-			{errors.tag && (
-				<span className='text-red-500 text-sm '>{errors.tag.message}</span>
+			{errors.tagId && (
+				<span className='text-red-500 text-sm '>{errors.tagId.message}</span>
 			)}
 
 			<button
 				type='submit'
 				className='btn btn-primary w-full text-base font-bold hover:scale-105 duration-500'
 			>
-				{isEditing ? 'Update post' : 'Create post'}
+				{isLoadingSubmit && (
+					<span className='loading loading-spinner text-neutral loading-md'></span>
+				)}
+				{isEditing
+					? isLoadingSubmit
+						? 'Updating...'
+						: 'Update'
+					: isLoadingSubmit
+					? 'Creating...'
+					: 'Create'}
 			</button>
 		</form>
 	)

@@ -29,14 +29,20 @@ const BlogDetailPage = async ({ params }: BlogDetailPageProps) => {
 	return (
 		<div>
 			<BackButton />
-			<div className='mb-8	'>
-				<h2 className='text-2xl font-bold my-4'>{post?.title}</h2>
-				<ButtonAction />
+			<div className='mb-8 flex flex-col justify-center items-start max-w-[500px] mx-auto'>
+				<h2 className='text-2xl font-bold my-4 '>
+					Title: <span className='px-2 '>{post?.title}</span>
+				</h2>
+				<h3 className='text-xl font-bold mb-4 mr-auto'>Tag:</h3>
+				<div className='badge badge-primary badge-outline'>
+					{post?.tag.name}
+				</div>
+				<h3 className='text-xl font-bold my-4 mr-auto'>Content:</h3>
+				<p className='text-slate-400 mb-4'>{post?.content}</p>
+				<div className='ml-auto gap-x-10 mt-4'>
+					<ButtonAction id={params.id} />
+				</div>
 			</div>
-			<div className='badge badge-primary badge-outline mr-auto '>
-				{post?.tag.name}
-			</div>
-			<p className='text-slate-400'>{post?.content}</p>
 		</div>
 	)
 }
